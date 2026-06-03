@@ -28,6 +28,8 @@ Use este roteiro como base para uma apresentação curta.
 
 ## 5. Demonstração do CI/CD
 
+"Na aba Commits do GitHub, o projeto evoluiu em etapas: one-page, README, Dockerfile, validação no Actions, envio para a EC2 e por fim o build Docker na instância."
+
 "Aqui está o workflow do GitHub Actions. Ele é executado quando ocorre push na branch `main` ou manualmente pela aba Actions."
 
 "A execução valida os arquivos, empacota o projeto, envia para a EC2, constrói a imagem Docker e sobe o container `agroverde-web`."
