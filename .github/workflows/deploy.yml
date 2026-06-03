@@ -1,0 +1,22 @@
+name: Deploy AgroVerde One-Page
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and deploy on EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate project files
+        run: |
+          test -f index.html
+          test -f Dockerfile
+          grep -q 'const INSTANCE_LABEL = "web-srv-01"' index.html
