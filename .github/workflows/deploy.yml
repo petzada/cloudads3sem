@@ -8,6 +8,8 @@ on:
 
 env:
   APP_DIR: /opt/agroverde-onepage
+  IMAGE_NAME: agroverde-onepage
+  CONTAINER_NAME: agroverde-web
   EC2_HOST: ${{ secrets.EC2_HOST }}
   EC2_USER: ${{ secrets.EC2_USER }}
   EC2_PORT: ${{ secrets.EC2_PORT }}
@@ -56,3 +58,19 @@ jobs:
         run: |
           ssh -i ~/.ssh/ec2_key -p "$EC2_PORT" "$EC2_USER@$EC2_HOST" "sudo mkdir -p $APP_DIR && sudo chown $EC2_USER:$EC2_USER $APP_DIR"
           scp -i ~/.ssh/ec2_key -P "$EC2_PORT" "$PACKAGE_PATH" "$EC2_USER@$EC2_HOST:$APP_DIR/agroverde-onepage.tar.gz"
+
+      - name: Build image and restart container on EC2
+        run: |
+          ssh -i ~/.ssh/ec2_key -p "$EC2_PORT" "$EC2_USER@$EC2_HOST" "
+            set -e
+            cd $APP_DIR
+            tar -xzf agroverde-onepage.tar.gz
+            docker build -t $IMAGE_NAME .
+            docker rm -f $CONTAINER_NAME 2>/dev/null || true
+            docker run -d \
+              --name $CONTAINER_NAME \
+              --restart unless-stopped \
+              -p 80:80 \
+              $IMAGE_NAME
+            docker ps --filter name=$CONTAINER_NAME
+          "
